@@ -1,0 +1,6 @@
+[submodule "pmdsky-debug"]
+	path = pmdsky-debug
+	url = https://github.com/UsernameFodder/pmdsky-debug
+[submodule "modules/snd-stream-c"]
+	path = modules/snd-stream-c
+	url = https://github.com/irdkwia/snd-stream-c
