@@ -65,6 +65,14 @@ static bool SpSwapFont(struct script_routine* routine, short script_string_id, b
   return true;
 }
 
+static bool SpChangeExtraFont(bool staffont) {
+  if(staffont)
+    LoadStaffont();
+  else
+    LoadMarkfont();
+  return true;
+}
+
 // Called for special process IDs 100 and greater.
 //
 // Set return_val to the return value that should be passed back to the game's script engine. Return true,
@@ -95,6 +103,9 @@ bool CustomScriptSpecialProcessCall(struct script_routine* routine, uint32_t spe
     case 107:
       last_selected_scene++;
       *return_val = 0;
+      return true;
+    case 108:
+      *return_val = SpChangeExtraFont(arg1);
       return true;
     default:
       return false;

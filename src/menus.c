@@ -2,6 +2,7 @@
 #include <cot.h>
 #include "extern.h"
 
+enum decoi_branch selected_branch = BRANCH_EXPLORATION;
 int last_selected_scene = 0;
 bool playing_all_scenes = false;
 

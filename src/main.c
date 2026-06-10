@@ -2,6 +2,8 @@
 #include <cot.h>
 #include "extern.h"
 
+const char MOTTO[] = "なんでもできる";
+
 int participant_popup_timer = -1;
 int participant_popup_window_id = -1;
 
@@ -172,6 +174,26 @@ __attribute((used)) bool ParseCustomUppercaseTextTags(struct dialogue_display_st
 }
 
 /*
+	Parses custom lowercase text tags.
+		- "love" returns "なんでもできる！"
+		
+	Returns NULL upon error, otherwise a char buffer (which may either be hardcoded, or copied into the "buf" param).
+*/
+__attribute((used)) char* ParseCustomLowercaseTextTags(char* buf, const char* tag, const char** tag_params, int tag_param_count) {
+	int tag_vals[4] = {0};
+	if(tag_param_count > ARRAY_LENGTH(tag_vals))
+		tag_param_count = ARRAY_LENGTH(tag_vals);
+		
+	for(int i = 0; i < tag_param_count; i++)
+		tag_vals[i] = AtoiTag(tag_params[i]);
+		
+	if(StrcmpTag(tag, "love")) {
+		return MOTTO;
+	}
+	return NULL;
+}
+
+/*
 	Some generic function that runs every frame in Ground Mode.
 */
 __attribute((used)) void YouCanDoAnything(void) {
@@ -190,7 +212,7 @@ __attribute((used)) void YouCanDoAnything(void) {
 */
 __attribute((used)) void CustomGetStringFromFile(char* buf, int string_id) {
 	if(TEXT_STRING_HIJACK_OPTIONS_MENU <= string_id && string_id <= TEXT_STRING_HIJACK_OPTIONS_MENU+TOTAL_SCENES_PER_BRANCH)
-		sprintf(buf, "%02d", string_id-TEXT_STRING_HIJACK_OPTIONS_MENU);
+		sprintf(buf, "%d", string_id-TEXT_STRING_HIJACK_OPTIONS_MENU);
 	else
 		GetStringFromFile(buf, string_id);
 }

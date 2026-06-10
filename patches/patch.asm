@@ -40,6 +40,18 @@
 		b AfterUppercaseTagIsFound
 	.endarea
 	
+	.org LowercaseTextTagFatalError
+	.area 0x28
+		add r0,r13,#0x1C8 ; output buffer
+		ldr r1,[r13,#0xB4] ; tag string
+		add r2,r13,#0xB8 ; the rest of the tag params
+		sub r3,r6,#0x1 ; tag count
+		bl ParseCustomLowercaseTextTags
+		movs r7,r0
+		bleq CardPullOut
+		b AfterLowercaseTagIsFound
+	.endarea
+	
 	.org GetTextSpeed
 	.area 0x4
 		bleq HijackTextSpeed

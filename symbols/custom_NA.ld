@@ -37,6 +37,8 @@ ChangeVolumeBgm2 = 0x02018194;
 StopBgm = 0x02019b28;
 UppercaseTextTagFatalError = 0x02021A10;
 AfterUppercaseTagIsFound = 0x02021AA0;
+LowercaseTextTagFatalError = 0x020232C8;
+AfterLowercaseTagIsFound = 0x020232F0;
 GetTextSpeed = 0x02020ED0;
 DoTextLoop = 0x02020EE0;
 AnalyzeTextReturn = 0x02021EC8;
@@ -48,6 +50,9 @@ PlayTimerTickWrapper = 0x0204f9cc;
 ExtraFontSwitchDefaultCase = 0x02026d74;
 ExtraFontReturnSix = 0x02026e10;
 ExtraFontDoRendering = 0x02026e18;
+LoadMarkfont = 0x02025C14;
+LoadStaffont = 0x02025B90;
+
 TEXTBOX_COLOR_ATTRIBUTES = 0x02027800;
 
 /* !file overlay28 */

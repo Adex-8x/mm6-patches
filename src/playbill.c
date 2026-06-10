@@ -43,7 +43,7 @@ SECTION_TEXT_PLAYBILL void CreateCustomControlsChart(int text_string_id) {
 
 SECTION_TEXT_PLAYBILL void CreatePlaybill(void) {
     int option_id = last_selected_scene >= 0 && last_selected_scene < TOTAL_SCENES_PER_BRANCH ? last_selected_scene : 0;
-    struct window_params menu_params = { .x_offset = 2, .y_offset = 3, .box_type = {0xFC} };
+    struct window_params menu_params = { .x_offset = 2, .y_offset = 2, .box_type = {0xFC} };
     struct window_params dbox_params = { .x_offset = 0x9, .y_offset = 0x12, .width = 0x15, .height = 0x4, .box_type = {0xFC} };
     struct window_flags menu_flags = { .a_accept = true, .se_on = true, .set_choice = true, .partial_menu = true, .menu_title = true, .menu_lower_bar = true, .no_accept_button = false };
     #if EVENT_FINISHED
@@ -64,7 +64,7 @@ SECTION_TEXT_PLAYBILL void CreatePlaybill(void) {
 }
 
 SECTION_TEXT_PLAYBILL void CreateYesNoSubMenu(void) {
-    struct window_params menu_params = { .x_offset = 0x14, .y_offset = 3, .width = 0xA, .box_type = {0xFC} };
+    struct window_params menu_params = { .x_offset = 0x14, .y_offset = 2, .width = 0xA, .box_type = {0xFC} };
     struct window_flags menu_flags = { .a_accept = true, .b_cancel = true, .se_on = true, .menu_title = true, .menu_lower_bar = true, .no_accept_button = true};
     struct window_extra_info menu_info = {.title_height = 0x10, .title_string_id = TEXT_STRING_PLAY_SCENE_QUESTION};
     struct simple_menu_id_item simple_options[3];
@@ -152,8 +152,9 @@ SECTION_TEXT_PLAYBILL bool UpdateSceneSelectorMenu(void) {
 }
 
 // Envelope (Main Menu)
+
 SECTION_TEXT_PLAYBILL void CreateSceneStarterMenu(void) {
-    struct window_params menu_params = { .x_offset = 0x12, .y_offset = 3, .box_type = {0xFC} };
+    struct window_params menu_params = { .x_offset = 0x12, .y_offset = 2, .box_type = {0xFC} };
     struct window_params dbox_params = { .x_offset = 0x9, .y_offset = 0x12, .width = 0x15, .height = 0x4, .box_type = {0xFC} };
     struct window_flags menu_flags = {.a_accept = true, .b_cancel = true, .se_on = true, .menu_title = true, .menu_lower_bar = true, .no_up_down = true, .invisible_cursor = true};
     struct window_extra_info menu_info = {.title_string_id = TEXT_STRING_SCENE_STARTER_TITLE, .title_height = 0x10};
@@ -173,7 +174,8 @@ SECTION_TEXT_PLAYBILL void CreateSceneStarterMenu(void) {
 
 SECTION_TEXT_PLAYBILL void CreateEnvelope(void) {
     last_selected_scene = 0x0;
-    struct window_params menu_params = { .x_offset = 2, .y_offset = 3, .box_type = {0xFF} };
+    selected_branch = BRANCH_EXPLORATION;
+    struct window_params menu_params = { .x_offset = 2, .y_offset = 2, .box_type = {0xFF} };
     struct window_flags menu_flags = { .a_accept = true, .se_on = true, .menu_title = true, .partial_menu = true};
     struct window_extra_info menu_info = {.title_string_id = TEXT_STRING_MAIN_MENU_TITLE, .title_height = 0x10};
     struct simple_menu_id_item simple_options[5] = {0};

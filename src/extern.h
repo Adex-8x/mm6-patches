@@ -20,6 +20,12 @@
 
 #define TEXT_STRING_HIJACK_OPTIONS_MENU 31337
 
+enum decoi_branch {
+    BRANCH_EXPLORATION,
+    BRANCH_CONTROL,
+    BRANCH_OBLITERATION
+};
+
 // Layouts for portraits
 enum portrait_layout_types {
     FACE_POS_STANDARD = 0,
@@ -80,6 +86,8 @@ extern void GetSceneName(char *dst, char *src);
 extern int CreateLivePerformer(int follow_idx, struct performer_spawn *performer_spawn, int hanger, int sector, bool attribute_flag);
 extern void GetOptionsMenuAllChoices(int window_id, int* buf);
 extern void PlayTimerTickWrapper(void);
+extern void LoadMarkfont(void);
+extern void LoadStaffont(void);
 extern struct rgba TEXTBOX_COLOR_ATTRIBUTES;
 extern struct font_data FONT_DATA;
 
@@ -95,6 +103,7 @@ extern SECTION_TEXT_PLAYBILL void CreateEnvelope(void);
 extern SECTION_TEXT_PLAYBILL void CloseEnvelope(void);
 extern SECTION_TEXT_PLAYBILL bool UpdateMysteryMailMenu(void);
 
+extern enum decoi_branch selected_branch;
 extern int last_selected_scene;
 extern bool playing_all_scenes;
 
