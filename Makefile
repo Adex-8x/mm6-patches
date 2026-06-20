@@ -53,6 +53,9 @@ TARGET		:=	out
 BUILD		:=	build
 SOURCES		:=	src src/cot
 INCLUDES	:=	include pmdsky-debug/headers
+MODULES		:=	$(wildcard modules/*)
+SOURCES		+=	$(foreach m,$(MODULES),$(wildcard $(m)/src))
+INCLUDES	+=	$(foreach m,$(MODULES),$(wildcard $(m)/include))
 OPT_LEVEL := -Os
 
 # Change to "RELEASE_CONFIG := -DNDEBUG" for release builds without asserts and logs
@@ -80,8 +83,13 @@ CFLAGS  +=  $(EXTRA_CFLAGS)
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS	:=	-g $(ARCH)
+CUSTOM_LDS := $(wildcard $(CURDIR)/../symbols/custom_$(REGION).ld) \
+			$(wildcard $(CURDIR)/../symbols/custom_$(REGION)_*.ld) \
+			$(wildcard $(CURDIR)/../symbols/custom_$(REGION)_*.ld) \
+			$(wildcard $(CURDIR)/../modules/*/symbols/custom_$(REGION).ld) \
+			$(wildcard $(CURDIR)/../modules/*/symbols/custom_$(REGION)_*.ld)
 LDFLAGS	=	-T $(CURDIR)/../symbols/generated_$(REGION).ld \
-			-T $(CURDIR)/../symbols/custom_$(REGION).ld -T $(CURDIR)/../linker.ld \
+			$(foreach ld,$(CUSTOM_LDS),-T $(ld)) -T $(CURDIR)/../linker.ld \
 			-g $(ARCH) -Wl,-Map,$(notdir $*.map) -Xlinker -no-enum-size-warning -nostdlib  -Xlinker --no-check-sections
 
 #---------------------------------------------------------------------------------
