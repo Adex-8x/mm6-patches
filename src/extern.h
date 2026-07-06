@@ -88,6 +88,7 @@ extern void GetOptionsMenuAllChoices(int window_id, int* buf);
 extern void PlayTimerTickWrapper(void);
 extern void LoadMarkfont(void);
 extern void LoadStaffont(void);
+extern bool FileOpenInner(struct file_stream* file, char* filepath);
 extern struct rgba TEXTBOX_COLOR_ATTRIBUTES;
 extern struct font_data FONT_DATA;
 

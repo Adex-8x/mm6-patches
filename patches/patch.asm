@@ -72,6 +72,16 @@
 		.word CustomGetStringFromFile
 	.endarea
 	
+	.org FileOpenInnerCallsite1
+	.area 0x4
+		bl HijackFileOpenInner
+	.endarea
+	
+	.org FileOpenInnerCallsite2
+	.area 0x4
+		bl HijackFileOpenInner
+	.endarea
+	
 .close
 
 .open "overlay11.bin", overlay11_start

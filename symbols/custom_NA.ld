@@ -52,6 +52,9 @@ ExtraFontReturnSix = 0x02026e10;
 ExtraFontDoRendering = 0x02026e18;
 LoadMarkfont = 0x02025C14;
 LoadStaffont = 0x02025B90;
+FileOpenInner = 0x0207F6C4;
+FileOpenInnerCallsite1 = 0x02008228;
+FileOpenInnerCallsite2 = 0x0206D704;
 
 TEXTBOX_COLOR_ATTRIBUTES = 0x02027800;
 

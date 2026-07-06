@@ -3,6 +3,8 @@
 #include "extern.h"
 
 const char MOTTO[] = "なんでもできる";
+const char SOUND_BGM_PATH[] = "SOUND/BGM";
+const char DECOI_BRANCH_PREFIXES[3] = {'E', 'C', 'O'};
 
 int participant_popup_timer = -1;
 int participant_popup_window_id = -1;
@@ -10,6 +12,8 @@ int participant_popup_window_id = -1;
 uint16_t text_numerator = 1;
 uint16_t text_denominator = 1;
 uint16_t text_count = 0;
+
+enum decoi_branch selected_branch = BRANCH_EXPLORATION;
 
 void ResetTextSpeedValues(void) {
 	text_numerator = 1;
@@ -217,6 +221,28 @@ __attribute((used)) void CustomGetStringFromFile(char* buf, int string_id) {
 		GetStringFromFile(buf, string_id);
 }
 
+/*
+	A piece of code running before FileOpenInner gets called.
+	Note: Does not affect LoadFileFromRom.
+*/
+__attribute((used)) bool HijackFileOpenInner(struct file_stream* file, char* filepath) {
+	#if EVENT_FINISHED
+	char filepath_hijack[0x100] = {0};
+	if(strncmp(filepath, SOUND_BGM_PATH, sizeof(SOUND_BGM_PATH)-1) == 0) {
+		strncpy(filepath_hijack, SOUND_BGM_PATH, sizeof(SOUND_BGM_PATH)-1);
+		char* current_path = filepath_hijack + sizeof(SOUND_BGM_PATH)-1;
+		*current_path = DECOI_BRANCH_PREFIXES[selected_branch];
+		current_path++;
+		strcpy(current_path, filepath + sizeof(SOUND_BGM_PATH)-1);
+		filepath = filepath_hijack;
+	}
+	#endif
+	return FileOpenInner(file, filepath);
+}
+
+/*
+	Text speed shenanigans adapted from Irdkwia's "TestSpeed" patch. 
+*/
 __attribute((used)) uint32_t TryChangeTextSpeed(struct dialogue_display_state* state) {
 	unsigned long long result = _s32_div_f((state->text_speed * text_numerator + text_count), text_denominator);
 	text_count = result >> 32;
@@ -241,6 +267,9 @@ __attribute((naked)) void HijackTextLoop(void) {
 	asm("b AnalyzeTextReturn");
 }
 
+/*
+	Just a little bit of setup for allowing numbers in one credits font...
+*/
 __attribute((naked)) void TryParseExtraFontNumber(void) {
 	asm("push {r0-r2}");
 	asm("mov r0,r3");
