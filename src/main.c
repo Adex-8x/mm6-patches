@@ -202,7 +202,7 @@ __attribute((used)) char* ParseCustomLowercaseTextTags(char* buf, const char* ta
 		tag_vals[i] = AtoiTag(tag_params[i]);
 		
 	if(StrcmpTag(tag, "love")) {
-		strncpy(buf, MOTTO, sizeof(MOTTO)-1);
+		strncpy(buf, MOTTO, sizeof(MOTTO));
 		return buf;
 	}
 	return NULL;
