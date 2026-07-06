@@ -21,6 +21,7 @@
 #define TEXT_STRING_HIJACK_OPTIONS_MENU 31337
 
 enum decoi_branch {
+    BRANCH_INVALID = -1,
     BRANCH_EXPLORATION,
     BRANCH_CONTROL,
     BRANCH_OBLITERATION
@@ -95,6 +96,7 @@ extern struct font_data FONT_DATA;
 // Generic stuff
 extern void SwapFont(const char* filepath, bool swap_unkno);
 extern bool SpResetTextboxColor(void);
+extern int GetParticipantTextStringId(int scene);
 
 // Playbill shenangians
 extern SECTION_TEXT_PLAYBILL void CreatePlaybill(void);

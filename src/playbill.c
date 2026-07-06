@@ -4,6 +4,7 @@
 
 #define MAIN_SIMPLE_MENU GLOBAL_MENU_INFO.window_ids[0]
 #define MAIN_OPTIONS_MENU GLOBAL_MENU_INFO.window_ids[3]
+#define MAIN_BRANCH_SELECTOR GLOBAL_MENU_INFO.window_ids[4]
 
 #define SCENE_SELECTOR_ADV_MENU GLOBAL_MENU_INFO.window_ids[0]
 #define SCENE_SELECTOR_PARTICIPANT_LISTING GLOBAL_MENU_INFO.window_ids[1]
@@ -13,9 +14,21 @@
 SECTION_DATA_PLAYBILL struct preprocessor_flags PREPROC_INSTANT_NO_INPUT = {.flags_1 = 0b000000010, .timer_2 = true}; // Instant text without waiting for any input!
 SECTION_DATA_PLAYBILL char SCENE_FORMATTER[] = "[M:S3] Scene %d";
 SECTION_DATA_PLAYBILL char SCENE_INITIAL[] = "[M:S3] Initial";
+SECTION_DATA_PLAYBILL char DECOI_BRANCH_FORMAT[] = "[CLUM_SET:0][M:B6][CLUM_SET:110][M:B7][CN]%s";
+SECTION_DATA_PLAYBILL char DECOI_BRANCH_SELECTED[] = "[CN][CS:C]%s[CR]";
+SECTION_DATA_PLAYBILL char* DECOI_BRANCH_NAMES[] = {"Exploration", "Control", "Obliteration"};
 
 SECTION_DATA_PLAYBILL uint16_t SCENE_CHOICES_STRING_IDS[TOTAL_SCENES_PER_BRANCH+1];
 SECTION_DATA_PLAYBILL int SCENE_ITEM_STATES[2];
+
+SECTION_TEXT_PLAYBILL void UpdateBranchBox(bool selected) {
+    char buffer[0x100] = {0};
+    if(selected)
+        sprintf(buffer, DECOI_BRANCH_SELECTED, DECOI_BRANCH_NAMES[selected_branch]);
+    else
+        sprintf(buffer, DECOI_BRANCH_FORMAT, DECOI_BRANCH_NAMES[selected_branch]);
+    ShowStringInDialogueBox(MAIN_BRANCH_SELECTOR, PREPROC_INSTANT_NO_INPUT, buffer, NULL);
+}
 
 SECTION_TEXT_PLAYBILL void SetPlaybillColors(void) {
     TEXTBOX_COLOR_ATTRIBUTES.r = 0xAA;
@@ -59,7 +72,7 @@ SECTION_TEXT_PLAYBILL void CreatePlaybill(void) {
     #else
     CreateCustomControlsChart(TEXT_STRING_MYSTERYMAIL_BLURB);
     #endif
-    ShowStringIdInDialogueBox(SCENE_SELECTOR_PARTICIPANT_LISTING, PREPROC_INSTANT_NO_INPUT, TEXT_STRING_PARTICIPANT_NAME_START+option_id, NULL);
+    ShowStringIdInDialogueBox(SCENE_SELECTOR_PARTICIPANT_LISTING, PREPROC_INSTANT_NO_INPUT, GetParticipantTextStringId(option_id), NULL);
     GLOBAL_MENU_INFO.previous_option = option_id;
 }
 
@@ -116,7 +129,7 @@ SECTION_TEXT_PLAYBILL bool UpdateSceneSelectorMenu(void) {
             else {
                 current_menu_option = GetAdvancedMenuCurrentOption(main_menu_id);
                 if(current_menu_option != GLOBAL_MENU_INFO.previous_option) {
-                    ShowStringIdInDialogueBox(SCENE_SELECTOR_PARTICIPANT_LISTING, PREPROC_INSTANT_NO_INPUT, TEXT_STRING_PARTICIPANT_NAME_START+current_menu_option, NULL);
+                    ShowStringIdInDialogueBox(SCENE_SELECTOR_PARTICIPANT_LISTING, PREPROC_INSTANT_NO_INPUT, GetParticipantTextStringId(current_menu_option), NULL);
                     GLOBAL_MENU_INFO.previous_option = current_menu_option;
                 }
             }
@@ -169,13 +182,13 @@ SECTION_TEXT_PLAYBILL void CreateSceneStarterMenu(void) {
     SCENE_ITEM_STATES[1] = 0;
     MAIN_OPTIONS_MENU = CreateOptionsMenu(&menu_params, menu_flags, &menu_info, option_items, 2, SCENE_ITEM_STATES);
     SCENE_SELECTOR_PARTICIPANT_LISTING = CreateDialogueBox(&dbox_params);
-    ShowStringIdInDialogueBox(SCENE_SELECTOR_PARTICIPANT_LISTING, PREPROC_INSTANT_NO_INPUT, TEXT_STRING_PARTICIPANT_NAME_START, NULL);
+    ShowStringIdInDialogueBox(SCENE_SELECTOR_PARTICIPANT_LISTING, PREPROC_INSTANT_NO_INPUT, GetParticipantTextStringId(0), NULL);
 }
 
 SECTION_TEXT_PLAYBILL void CreateEnvelope(void) {
     last_selected_scene = 0x0;
-    selected_branch = BRANCH_EXPLORATION;
     struct window_params menu_params = { .x_offset = 2, .y_offset = 2, .box_type = {0xFF} };
+    struct window_params dbox_params = { .x_offset = 2, .y_offset = 13, .width = 0xE, .height = 0x2, .box_type = {0xFF} };
     struct window_flags menu_flags = { .a_accept = true, .se_on = true, .menu_title = true, .partial_menu = true};
     struct window_extra_info menu_info = {.title_string_id = TEXT_STRING_MAIN_MENU_TITLE, .title_height = 0x10};
     struct simple_menu_id_item simple_options[5] = {0};
@@ -187,6 +200,8 @@ SECTION_TEXT_PLAYBILL void CreateEnvelope(void) {
     SetPlaybillColors();
     CreateCustomControlsChart(TEXT_STRING_MYSTERYMAIL_BLURB);
     MAIN_SIMPLE_MENU = CreateSimpleMenuFromStringIds(&menu_params, menu_flags, &menu_info, simple_options, ARRAY_LENGTH(simple_options));
+    MAIN_BRANCH_SELECTOR = CreateDialogueBox(&dbox_params);
+    UpdateBranchBox(false);
     GLOBAL_MENU_INFO.previous_option = 0;
 }
 
@@ -200,6 +215,8 @@ SECTION_TEXT_PLAYBILL void CloseEnvelope(void) {
         CloseDialogueBox(SCENE_SELECTOR_PARTICIPANT_LISTING);
     if(SCENE_SELECTOR_TOP_CHART >= 0)
         CloseControlsChart(SCENE_SELECTOR_TOP_CHART);
+    if(MAIN_BRANCH_SELECTOR >= 0)
+        CloseDialogueBox(MAIN_BRANCH_SELECTOR);
     TextboxSolid();
     SpResetTextboxColor();
     SetBothScreensWindowsColor(2);
@@ -207,6 +224,7 @@ SECTION_TEXT_PLAYBILL void CloseEnvelope(void) {
 
 SECTION_TEXT_PLAYBILL bool UpdateMysteryMailMenu(void) {
     #if EVENT_FINISHED
+    struct buttons buttons;
     int main_menu_id = MAIN_SIMPLE_MENU;
     int sub_menu_id = MAIN_OPTIONS_MENU;
     int result;
@@ -219,12 +237,31 @@ SECTION_TEXT_PLAYBILL bool UpdateMysteryMailMenu(void) {
                 if(result == 1) {
                     // Open a submenu; which scene to start from?
                     GLOBAL_MENU_INFO.state++;
+                    UpdateBranchBox(true);
                 }
                 else {
                     // Welp we're done here
                     GLOBAL_MENU_INFO.return_val = result;
                     return true;
                 }
+            }
+            // If main menu active, check for a branch change via L/R
+            GetPressedButtons(0, &buttons);
+            enum decoi_branch current_branch = selected_branch;
+            if(buttons.l) {
+                selected_branch--;
+                if(selected_branch < BRANCH_EXPLORATION)
+                    selected_branch = BRANCH_OBLITERATION;
+            }
+            else if(buttons.r) {
+                selected_branch++;
+                if(selected_branch > BRANCH_OBLITERATION)
+                    selected_branch = BRANCH_EXPLORATION;
+            }
+            
+            if(current_branch != selected_branch) {
+                PlaySeVolumeWrapper(0x4);
+                UpdateBranchBox(false);
             }
             break;
         case 1:;
@@ -249,13 +286,14 @@ SECTION_TEXT_PLAYBILL bool UpdateMysteryMailMenu(void) {
                     CloseDialogueBox(SCENE_SELECTOR_PARTICIPANT_LISTING);
                     SCENE_SELECTOR_PARTICIPANT_LISTING = -1;
                     GLOBAL_MENU_INFO.state = 0;
+                    UpdateBranchBox(false);
                 }
             }
             else {
                 GetOptionsMenuAllChoices(sub_menu_id, SCENE_ITEM_STATES);
                 current_menu_option = SCENE_ITEM_STATES[0];
                 if(current_menu_option != GLOBAL_MENU_INFO.previous_option) {
-                    ShowStringIdInDialogueBox(SCENE_SELECTOR_PARTICIPANT_LISTING, PREPROC_INSTANT_NO_INPUT, TEXT_STRING_PARTICIPANT_NAME_START+current_menu_option, NULL);
+                    ShowStringIdInDialogueBox(SCENE_SELECTOR_PARTICIPANT_LISTING, PREPROC_INSTANT_NO_INPUT, GetParticipantTextStringId(current_menu_option), NULL);
                     GLOBAL_MENU_INFO.previous_option = current_menu_option;
                 }
             }

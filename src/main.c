@@ -15,6 +15,11 @@ uint16_t text_count = 0;
 
 enum decoi_branch selected_branch = BRANCH_EXPLORATION;
 
+int GetParticipantTextStringId(int scene) {
+    int text_string_id = (TEXT_STRING_PARTICIPANT_NAME_START+scene) + (selected_branch * TOTAL_SCENES_PER_BRANCH);
+    return text_string_id;
+}
+
 void ResetTextSpeedValues(void) {
 	text_numerator = 1;
 	text_denominator = 1;
@@ -34,7 +39,7 @@ void CreateParticipantPopup(void) {
 		sprintf(popup_message, "[UNK:0][FT:1][CN]Ｓｃｅｎｅ　%d\n[UNK:1][FT:0][CN]", scene_number);
 	struct window_params window_params = { .x_offset = 0x1, .y_offset = 0x1, .width = 0x1E, .height = 0x4, .screen = {SCREEN_MAIN}, .box_type = {0xFC} };
 	struct preprocessor_flags preprocessor_flags = {.flags_1 = 0b000000010, .timer_2 = true};
-	participant_string = StringFromId(scene_number+TEXT_STRING_PARTICIPANT_NAME_START);
+	participant_string = StringFromId(GetParticipantTextStringId(scene_number));
 	// This never really runs for MMR, but whatever, leftover code go brr
 	for(int i = 0; i < strlen(participant_string); i++) {
 		if(participant_string[i] == '\n')
@@ -59,6 +64,11 @@ __attribute((used)) void CustomGetActingSceneName(char* truncated_scene_name, ch
 		strncpy(truncated_scene_name, "initial", 8);
 	else
 		snprintf(truncated_scene_name, 8, "%02d", last_selected_scene);
+		
+	#if EVENT_FINISHED
+	strncat(truncated_scene_name, DECOI_BRANCH_PREFIXES+selected_branch, 1);
+	#endif
+	
 	SetPerformanceFlagWithChecks(62, 0);
 	ResetTextSpeedValues();
 	// Reset the SCENARIO_SUB variables...
@@ -70,7 +80,7 @@ __attribute((used)) void CustomGetActingSceneName(char* truncated_scene_name, ch
 			buffer++;
 		}
 	}
-	if(playing_all_scenes)
+	if(playing_all_scenes && last_selected_scene > 0)
 		CreateParticipantPopup();
 }
 
@@ -192,7 +202,8 @@ __attribute((used)) char* ParseCustomLowercaseTextTags(char* buf, const char* ta
 		tag_vals[i] = AtoiTag(tag_params[i]);
 		
 	if(StrcmpTag(tag, "love")) {
-		return MOTTO;
+		strncpy(buf, MOTTO, sizeof(MOTTO)-1);
+		return buf;
 	}
 	return NULL;
 }
@@ -213,6 +224,7 @@ __attribute((used)) void YouCanDoAnything(void) {
 
 /*
 	Hijack some custom exceptions for Text Strings.
+	Mostly used in an options menu to cleanly insert a number, rather than having a bunch of Text Strings w/ numbers.
 */
 __attribute((used)) void CustomGetStringFromFile(char* buf, int string_id) {
 	if(TEXT_STRING_HIJACK_OPTIONS_MENU <= string_id && string_id <= TEXT_STRING_HIJACK_OPTIONS_MENU+TOTAL_SCENES_PER_BRANCH)
@@ -222,7 +234,8 @@ __attribute((used)) void CustomGetStringFromFile(char* buf, int string_id) {
 }
 
 /*
-	A piece of code running before FileOpenInner gets called.
+	A function running before FileOpenInner gets called.
+	Mostly used to distinguish between branch-specific files.
 	Note: Does not affect LoadFileFromRom.
 */
 __attribute((used)) bool HijackFileOpenInner(struct file_stream* file, char* filepath) {
@@ -231,6 +244,8 @@ __attribute((used)) bool HijackFileOpenInner(struct file_stream* file, char* fil
 	if(strncmp(filepath, SOUND_BGM_PATH, sizeof(SOUND_BGM_PATH)-1) == 0) {
 		strncpy(filepath_hijack, SOUND_BGM_PATH, sizeof(SOUND_BGM_PATH)-1);
 		char* current_path = filepath_hijack + sizeof(SOUND_BGM_PATH)-1;
+		// Assume we've selected the Exploration branch
+		// If loading "SOUND/BGM/bgm.swd", load "SOUND/BGME/bgm.swd" instead
 		*current_path = DECOI_BRANCH_PREFIXES[selected_branch];
 		current_path++;
 		strcpy(current_path, filepath + sizeof(SOUND_BGM_PATH)-1);
