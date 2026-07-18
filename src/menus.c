@@ -74,5 +74,5 @@ __attribute((used)) struct custom_menu CUSTOM_MENUS[] = {
     }
 };
 
-struct global_menu_info GLOBAL_MENU_INFO;
+__attribute__((section(".data.fixed1"))) struct global_menu_info GLOBAL_MENU_INFO;
 const int CUSTOM_MENU_AMOUNT = ARRAY_LENGTH(CUSTOM_MENUS);
