@@ -5,7 +5,7 @@ MEMORY {
                 see https://docs.google.com/document/d/1Rs4icdYtiM6KYnWxMkdlw7jpWrH7qw5v6LOfDWIiYho
         */
         scratch : ORIGIN = 0x23D7FF0, LENGTH = 0x1000 /* DO NOT TOUCH */
-        main    : ORIGIN = 0x23D8FF0, LENGTH = 0x7010
+        main    : ORIGIN = 0x23D8FF0, LENGTH = 0x7010 /* DO NOT TOUCH */
         /* Change/Add memory locations here */
         /* NEW    : ORIGIN = 0x2000000, LENGTH = 0x800 */
         
@@ -45,7 +45,10 @@ SECTIONS {
                 Note that you should add your special sections before that
         */
         .text.ov.36.main : {
-                *(.data.fixed1) /* DO NOT TOUCH */
+                /* Set symbols: DO NOT TOUCH, only add other set symbols at the end of this area */
+                *(.data.fixed1)
+                /* End of set symbols */
+                /* Freely placed symbols */
                 *(.init)
                 *(.text)
                 *(.text.*)
