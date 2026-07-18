@@ -45,6 +45,7 @@ SECTIONS {
                 Note that you should add your special sections before that
         */
         .text.ov.36.main : {
+                *(.data.fixed1) /* DO NOT TOUCH */
                 *(.init)
                 *(.text)
                 *(.text.*)
