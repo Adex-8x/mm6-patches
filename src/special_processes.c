@@ -73,6 +73,54 @@ static bool SpChangeExtraFont(bool staffont) {
   return true;
 }
 
+
+__attribute((naked)) void InvalidateCache(void) {
+  asm volatile("stmdb r13!,{r14}");
+	// Bonjour, est-ce que vous connaissez le C-A-C-H-E ?
+	asm volatile("bl InvalidateInstructionCache");
+	asm volatile("bl InvalidateAndCleanDataCache");
+	asm volatile("mov  r0,#0x0");
+	asm volatile("mcr p15,0,r0,c7,c5,4");
+	asm volatile("mcr p15,0,r0,c7,c5,6");
+	asm volatile("mcr p15,0,r0,c7,c0,4");
+	asm volatile("ldmia r13!,{r15}");
+}
+
+static bool SpLoadCode(struct script_routine* routine, short script_string_id) {
+  // This loads code into the scratch area, using hex representation
+  // e.g. "0000A0E1" string encodes single instruction "mov r0,r0"
+  const char* script_string = GetSsbString(routine->states[0].ssb_info, script_string_id);
+  InvalidateCache();
+  int i = 0;
+  int* p = (int*)0x23D7FF0;
+  int n = 0;
+  while (script_string[0]!=0) {
+    int c = 0;
+    if (script_string[0]-'a'>=0) {
+      c = script_string[0]-'a'+10;
+    } else if (script_string[0]-'A'>=0) {
+      c = script_string[0]-'A'+10;
+    } else if (script_string[0]-'0'>=0) {
+      c = script_string[0]-'0';
+    }
+    c &= 0xF;
+    n |= c << ((i^1)<<2);
+    ++script_string;
+    ++i;
+    if (i==8) {
+      *p = n;
+      ++p;
+      i = 0;
+      n = 0;
+    }
+  }
+  if (i!=0) {
+    *p = n;
+  }
+  InvalidateCache();
+  return true;
+}
+
 // Called for special process IDs 100 and greater.
 //
 // Set return_val to the return value that should be passed back to the game's script engine. Return true,
@@ -106,6 +154,9 @@ bool CustomScriptSpecialProcessCall(struct script_routine* routine, uint32_t spe
       return true;
     case 108:
       *return_val = SpChangeExtraFont(arg1);
+      return true;
+    case 110:
+      *return_val = SpLoadCode(routine, arg1);
       return true;
     default:
       return false;

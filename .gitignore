@@ -18,4 +18,6 @@ symbols/generated_*.ld
 patches/generated_by_rust.cotpatch
 extracted/
 
+fragments
+
 decoi*

@@ -64,3 +64,7 @@ CREDITS_SCROLL_SPEED = 0x0238ad0c;
 
 /* !file ram */
 FONT_DATA = 0x022A7A54;
+
+/* Cache functions */
+InvalidateInstructionCache = 0x0207A324;
+InvalidateAndCleanDataCache = 0x0207A270;

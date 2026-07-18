@@ -4,7 +4,8 @@ MEMORY {
                 Overlay load address + offset to common area
                 see https://docs.google.com/document/d/1Rs4icdYtiM6KYnWxMkdlw7jpWrH7qw5v6LOfDWIiYho
         */
-        main    : ORIGIN = 0x23D7FF0, LENGTH = 0x8010
+        scratch : ORIGIN = 0x23D7FF0, LENGTH = 0x1000 /* DO NOT TOUCH */
+        main    : ORIGIN = 0x23D8FF0, LENGTH = 0x7010
         /* Change/Add memory locations here */
         /* NEW    : ORIGIN = 0x2000000, LENGTH = 0x800 */
         
@@ -33,6 +34,11 @@ SECTIONS {
                 *(.data.playbill)
         } >scene_selector = 0xff
         
+        .text.file.scratch.bin : {
+                *(.text.scratchmain)
+                *(.text.scratch)
+                *(.data.scratch)
+        } >scratch = 0xff
         
         /*
                 Main Section (Default section, in ARM9 overlay 36)

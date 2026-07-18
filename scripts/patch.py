@@ -11,6 +11,8 @@ import tempfile
 
 OVERLAY_EXTRA = 36
 
+FILE_OUTPUT = "fragments"
+
 region = sys.argv[1]
 rom_path = sys.argv[2]
 overlay_elf_path = sys.argv[3]
@@ -42,7 +44,6 @@ def load_overlay_symbols():
 
 def apply_overlay():
   assert OVERLAY_EXTRA in overlays, "No overlay 36 found, apply the ExtraSpace patch first."
-
   # TODO: Find a better process to parse section info
   process = Popen(["arm-none-eabi-objdump", "-h", overlay_elf_path], stdout=PIPE)
   (stdout, stderr) = process.communicate()
@@ -63,24 +64,27 @@ def apply_overlay():
           size = int(section[2], 16)
           vma = int(section[3], 16)
           offset = int(section[5], 16)
-          bank_number = int(hierarchy[3])
-          if hierarchy[2] == "ov":
-            overlay = overlays[bank_number]
-            overlay_bytes = rom.files[overlay.fileID]
-            ram_address = overlay.ramAddress
-          elif hierarchy[2] == "arm":
-            if bank_number == 9:
-              overlay_bytes = rom.arm9
-              ram_address = rom.arm9RamAddress
-            elif bank_number == 7:
-              overlay_bytes = rom.arm7
-              ram_address = rom.arm7RamAddress
-            else:
-              raise ValueError("Invalid arm binary '%d'"%bank_number)
+          if hierarchy[2] == "file":
+            os.makedirs(FILE_OUTPUT, exist_ok=True)
+            print("Applying C patch section to",hierarchy[2],".".join(hierarchy[3:]),":", section[1], hex(vma), hex(vma+size))
           else:
-            raise ValueError("Invalid section '%s'"%hierarchy[2])
-
-          print("Applying C patch section to",hierarchy[2],bank_number,":", section[1], hex(vma), hex(vma+size))
+            bank_number = int(hierarchy[3])
+            if hierarchy[2] == "ov":
+              overlay = overlays[bank_number]
+              overlay_bytes = rom.files[overlay.fileID]
+              ram_address = overlay.ramAddress
+            elif hierarchy[2] == "arm":
+              if bank_number == 9:
+                overlay_bytes = rom.arm9
+                ram_address = rom.arm9RamAddress
+              elif bank_number == 7:
+                overlay_bytes = rom.arm7
+                ram_address = rom.arm7RamAddress
+              else:
+                raise ValueError("Invalid arm binary '%d'"%bank_number)
+            else:
+              raise ValueError("Invalid section '%s'"%hierarchy[2])
+            print("Applying C patch section to",hierarchy[2],bank_number,":", section[1], hex(vma), hex(vma+size))
 
           with tempfile.TemporaryDirectory() as tmpdirname:
             binaryfile = os.path.join(tmpdirname, "temp.bin")
@@ -91,24 +95,28 @@ def apply_overlay():
               custom_code_bytes = f.read()
           
           assert size == len(custom_code_bytes), f"Size mismatch"
-          
-          # Combine the existing overlay bytes with the custom code
-          padding = vma - ram_address
-          new_overlay_bytes = bytearray(padding + size)
-          new_overlay_bytes[0:len(overlay_bytes)] = overlay_bytes
-          new_overlay_bytes[padding:padding + size] = custom_code_bytes
 
-          if hierarchy[2] == "ov":
-            overlay.data = new_overlay_bytes
-            overlay.save()
-            rom.files[overlay.fileID] = new_overlay_bytes
-            rom.arm9OverlayTable = ndspy.code.saveOverlayTable(overlays)
-          elif hierarchy[2] == "arm":
-            if bank_number == 9:
-              rom.arm9 = new_overlay_bytes
-            elif bank_number == 7:
-              rom.arm7 = new_overlay_bytes
-    
+          if hierarchy[2] == "file":
+            with open(os.path.join(FILE_OUTPUT, ".".join(hierarchy[3:])), "wb") as f:
+              f.write(custom_code_bytes)
+          else:
+            # Combine the existing overlay bytes with the custom code
+            padding = vma - ram_address
+            new_overlay_bytes = bytearray(padding + size)
+            new_overlay_bytes[0:len(overlay_bytes)] = overlay_bytes
+            new_overlay_bytes[padding:padding + size] = custom_code_bytes
+
+            if hierarchy[2] == "ov":
+              overlay.data = new_overlay_bytes
+              overlay.save()
+              rom.files[overlay.fileID] = new_overlay_bytes
+              rom.arm9OverlayTable = ndspy.code.saveOverlayTable(overlays)
+            elif hierarchy[2] == "arm":
+              if bank_number == 9:
+                rom.arm9 = new_overlay_bytes
+              elif bank_number == 7:
+                rom.arm7 = new_overlay_bytes
+      
     if readline>0:
       readline -= 1
 
