@@ -155,6 +155,9 @@ bool CustomScriptSpecialProcessCall(struct script_routine* routine, uint32_t spe
     case 108:
       *return_val = SpChangeExtraFont(arg1);
       return true;
+    case 109:
+        *return_val = SpControlSceneMemory(arg1, arg2);
+        return true;
     case 110:
       *return_val = SpLoadCode(routine, arg1);
       return true;

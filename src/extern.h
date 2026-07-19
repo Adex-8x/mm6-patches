@@ -110,3 +110,5 @@ extern enum decoi_branch selected_branch;
 extern int last_selected_scene;
 extern bool playing_all_scenes;
 
+// Control Scene Memory Special Process
+extern int SpControlSceneMemory(int params, int scene);
