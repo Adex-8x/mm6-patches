@@ -66,6 +66,19 @@ struct performer_spawn {
     uint8_t flags_y;
 };
 
+struct object_spawn {
+    int16_t kind;
+    struct direction_id_8 direction;
+    uint8_t collision_box_size_x;
+    uint8_t collision_box_size_y;
+    uint8_t x;
+    uint8_t y;
+    uint8_t flags_x;
+    uint8_t flags_y;
+    uint8_t unk;
+    int16_t link;
+};
+
 struct font_data {
     void* kanji_rd_data;
     void* unkno_rd_data;
@@ -85,6 +98,7 @@ extern void TextboxSolid(void);
 extern void TextboxTransparent(void);
 extern void GetSceneName(char *dst, char *src);
 extern int CreateLivePerformer(int follow_idx, struct performer_spawn *performer_spawn, int hanger, int sector, bool attribute_flag);
+extern int CreateLiveObject(int follow_idx, struct object_spawn *object_spawn, int hanger, int sector, bool attribute_flag);
 extern void GetOptionsMenuAllChoices(int window_id, int* buf);
 extern void PlayTimerTickWrapper(void);
 extern void LoadMarkfont(void);

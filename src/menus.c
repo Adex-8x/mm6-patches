@@ -1,6 +1,7 @@
 #include <pmdsky.h>
 #include <cot.h>
 #include "extern.h"
+#include "battletholomew.h"
 
 int last_selected_scene = 0;
 bool playing_all_scenes = false;
@@ -103,7 +104,17 @@ __attribute((used)) struct custom_menu CUSTOM_MENUS[] = {
         .create = CreateFithteaoneMailMenu,
         .close = CloseFithteaoneMailMenu,
         .update = UpdateFithteaoneMailMenu,
-    }
+    },
+    {
+        .create = CreateBattle1,
+        .close = CloseBattle,
+        .update = UpdateBattle
+    },
+    {
+        .create = CreateBattle2,
+        .close = CloseBattle,
+        .update = UpdateBattle
+    },
 };
 
 __attribute__((section(".data.fixed1"))) struct global_menu_info GLOBAL_MENU_INFO;
