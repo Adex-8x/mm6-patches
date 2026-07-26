@@ -10,6 +10,7 @@ IS_BASE_GAME_MENU_FINISHED = 0x02324C9C;
 GetSceneName = 0x022E4600;
 GetActingSceneName = 0x022DEBF4;
 CreateLivePerformer = 0x022FD72C;
+CreateLiveObject = 0x022FBEC4;
 AfterAttributeBitfieldSwitchCase = 0x022F816C;
 DefaultActorTypeBranch = 0x022F80D0;
 ShouldReloadCachedScene = 0x022E573C;
