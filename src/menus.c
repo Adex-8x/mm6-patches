@@ -43,6 +43,33 @@ void CloseMysteryMailMenu(void) {
     UnloadOverlay(OGROUP_OVERLAY_24);
 }
 
+struct window_params FithteaoneMailDialogueBoxParams = {
+    .update = UpdateDialogueBox,
+    .x_offset = 2,
+    .y_offset = 2,
+    .width = 28,
+    .height = 20,
+    .screen = {.val = SCREEN_SUB},
+    .box_type = {.val = 0xFD}
+};
+
+void CreateFithteaoneMailMenu(void) {
+    struct preprocessor_flags pre_flags = {};
+    GLOBAL_MENU_INFO.window_ids[1] = CreateDialogueBox(&FithteaoneMailDialogueBoxParams);
+    int mail_number = LoadScriptVariableValue(NULL, VAR_LOTTERY_RESULT);
+    ShowStringIdInDialogueBox(GLOBAL_MENU_INFO.window_ids[1], pre_flags, 9335 + mail_number, NULL);
+}
+
+bool UpdateFithteaoneMailMenu(void) {
+    return !IsDialogueBoxActive(GLOBAL_MENU_INFO.window_ids[1]) && IsAOrBPressed();
+}
+
+void CloseFithteaoneMailMenu(void) {
+    CloseDialogueBox(GLOBAL_MENU_INFO.window_ids[1]);
+}
+
+
+
 
 // Add your custom script menus to the list below.
 // `create` is a pointer to the initial function that will run only once when a custom `message_Menu` runs. This is typically responsible for the initial creation of any windows.
@@ -71,6 +98,11 @@ __attribute((used)) struct custom_menu CUSTOM_MENUS[] = {
         .create = (void (*)())0x23D7FF0,
         .close = (void (*)())0x23D7FF4,
         .update = (bool (*)())0x23D7FF8
+    },
+    {
+        .create = CreateFithteaoneMailMenu,
+        .close = CloseFithteaoneMailMenu,
+        .update = UpdateFithteaoneMailMenu,
     }
 };
 
