@@ -121,6 +121,11 @@ static bool SpLoadCode(struct script_routine* routine, short script_string_id) {
   return true;
 }
 
+static bool SpCheckUserString(struct script_routine* routine, short script_string_id) {
+  const char* script_string = GetSsbString(routine->states[0].ssb_info, script_string_id);
+  return strncmp(menu_user_string, script_string, sizeof(menu_user_string)) == 0;
+}
+
 // Called for special process IDs 100 and greater.
 //
 // Set return_val to the return value that should be passed back to the game's script engine. Return true,
@@ -160,6 +165,9 @@ bool CustomScriptSpecialProcessCall(struct script_routine* routine, uint32_t spe
       return true;
     case 110:
       *return_val = SpLoadCode(routine, arg1);
+      return true;
+    case 111:
+      *return_val = SpCheckUserString(routine, arg1);
       return true;
     default:
       return false;

@@ -126,3 +126,6 @@ extern bool playing_all_scenes;
 
 // Control Scene Memory Special Process
 extern int SpControlSceneMemory(int params, int scene);
+
+// 10-char string to be set by a script menu and checked by a special process
+extern char menu_user_string[10];

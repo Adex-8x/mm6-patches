@@ -5,6 +5,7 @@
 
 int last_selected_scene = 0;
 bool playing_all_scenes = false;
+char menu_user_string[10] = {0};
 
 // The initial menu function called to show a keyboard prompt for the player to type in a string.
 // This is intended to be used by a variety of menus.
@@ -69,6 +70,16 @@ void CloseFithteaoneMailMenu(void) {
     CloseDialogueBox(GLOBAL_MENU_INFO.window_ids[1]);
 }
 
+void CloseGenericInputMenu(void) {
+    MemZero(menu_user_string, sizeof(menu_user_string));
+    strncpy(menu_user_string, (char*)GetKeyboardStringResult(), sizeof(menu_user_string));
+    for(int i = 0; i < sizeof(menu_user_string) && menu_user_string[i] != '\0'; i++) {
+        if(menu_user_string[i] >= 'A' && menu_user_string[i] <= 'Z')
+            menu_user_string[i] += 0x20;
+    }
+    GLOBAL_MENU_INFO.return_val = 0;
+}
+
 
 
 
@@ -82,16 +93,21 @@ void CloseFithteaoneMailMenu(void) {
 //
 // Refer to menus.h for more information on the fields of `custom_menu` and `global_menu_info`!
 __attribute((used)) struct custom_menu CUSTOM_MENUS[] = {
+    // ID 80
+    // Creates the scene selector.
     {
         .create = CreateSceneSelectorMenu,
         .close = CloseSceneSelectorMenu,
         .update = UpdateSceneSelectorMenu
     },
+    // ID 81
+    // Creates the main menu, only properly used once the event has finished.
     {
         .create = CreateMysteryMailMenu,
         .close = CloseMysteryMailMenu,
         .update = UpdateMysteryMailMenu
     },
+    // ID 82
     {
         // SPECIAL: This menu will use whatever code is loaded in the scratch area
         // Code can be loaded using special process SpLoadCode
@@ -100,21 +116,33 @@ __attribute((used)) struct custom_menu CUSTOM_MENUS[] = {
         .close = (void (*)())0x23D7FF4,
         .update = (bool (*)())0x23D7FF8
     },
+    // ID 83
     {
         .create = CreateFithteaoneMailMenu,
         .close = CloseFithteaoneMailMenu,
         .update = UpdateFithteaoneMailMenu,
     },
+    // ID 84
     {
         .create = CreateBattle1,
         .close = CloseBattle,
         .update = UpdateBattle
     },
+    // ID 85
     {
         .create = CreateBattle2,
         .close = CloseBattle,
         .update = UpdateBattle
     },
+    // ID 86
+    // Prompts the player to input a string.
+    {
+        .keyboard_prompt_string_id = 300,
+        .keyboard_confirm_string_id = 301,
+        .create = CreateSimpleKeyboardMenu,
+        .close = CloseGenericInputMenu,
+        .update = UpdateSimpleKeyboardMenu
+    }
 };
 
 __attribute__((section(".data.fixed1"))) struct global_menu_info GLOBAL_MENU_INFO;
