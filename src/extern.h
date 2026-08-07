@@ -129,3 +129,10 @@ extern int SpControlSceneMemory(int params, int scene);
 
 // 10-char string to be set by a script menu and checked by a special process
 extern char menu_user_string[10];
+
+//Touchscreen Stuff
+extern uint8_t TSXPosLive;
+extern uint8_t TSYPosLive;
+extern uint8_t TSXPosLastMitDrag;
+extern uint8_t TSYPosLastMitDrag;
+extern uint8_t TSPressed;

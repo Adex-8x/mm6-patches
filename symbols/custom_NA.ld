@@ -65,6 +65,11 @@ CREDITS_SCROLL_SPEED = 0x0238ad0c;
 
 /* !file ram */
 FONT_DATA = 0x022A7A54;
+TSXPosLive = 0x22A35DC;
+TSYPosLive = 0x22A35E0;
+TSPressed = 0x22A35E4;
+TSXPosLastMitDrag = 0x22A35FC;
+TSYPosLastMitDrag = 0x22A3600;
 
 /* Cache functions */
 InvalidateInstructionCache = 0x0207A324;

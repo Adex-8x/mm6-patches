@@ -1,6 +1,7 @@
 #include <pmdsky.h>
 #include <cot.h>
 #include "extern.h"
+#include "sweeper.h"
 
 // Special process 100: Change border color
 // Based on https://github.com/SkyTemple/eos-move-effects/blob/master/example/process/set_frame_color.asm
@@ -169,6 +170,35 @@ bool CustomScriptSpecialProcessCall(struct script_routine* routine, uint32_t spe
     case 111:
       *return_val = SpCheckUserString(routine, arg1);
       return true;
+    case 112:
+    switch (arg1){
+      case 1:
+      zufallsgeneration();
+      break;
+      case 2:
+      *return_val = checkFlaechen();
+      break;
+      case 3:
+      *return_val = checkTSDruck();
+      break;
+      case 4:
+      *return_val = checkTagFlag(arg2);
+      break;
+      case 5:
+      *return_val = checkAufgedeckt(arg2);
+      break;
+      case 6:
+      aufdecken(arg2);
+      break;
+      case 7:
+      *return_val = checkWin();
+      break;
+      case 8:
+      positionAnpassen();
+      break;
+      default:
+      break;
+    }
     default:
       return false;
   }
