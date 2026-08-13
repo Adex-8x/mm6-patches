@@ -56,6 +56,7 @@ LoadStaffont = 0x02025B90;
 FileOpenInner = 0x0207F6C4;
 FileOpenInnerCallsite1 = 0x02008228;
 FileOpenInnerCallsite2 = 0x0206D704;
+PlaySeFull = 0x201831C; /* EU: 0x20183B8 */
 
 TEXTBOX_COLOR_ATTRIBUTES = 0x02027800;
 
