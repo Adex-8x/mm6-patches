@@ -1,6 +1,7 @@
 #include <pmdsky.h>
 #include <cot.h>
 #include "extern.h"
+#include "pan.h"
 
 const char MOTTO[] = "なんでもできる";
 const char SOUND_BGM_PATH[] = "SOUND/BGM";
@@ -138,6 +139,8 @@ void SwapFont(const char* filepath, bool swap_unkno) {
 	Parses custom uppercase text tags.
 		- "VS:X:Y" ("VITESSE") modifies text speed by X/Y. For example, "[VS:1:2]" halves speed, but "[VS:4]" quadruples it. The second parameter is optional, and if missing, will default to 1.
 		- "VR" reverts text speed to normal (equivalent to "[VS:1:1]" and "[VS:1]").
+		- "VP:X" sets the pan for the text sound to X. 0 is left, 260 is center, 520 is right. (Internally, this is -260 to 260, but AtoiTag doesn't work wtih negative numbers).
+		- "VC" restores the pan for the text sound to the center (equivalent to "[VP:260]").
 		- "U:X" ("UNLOCK") unlocks the the Xth scripting lock.
 		- "UNK" swaps the unkno_rd.dat font for kanji_jp.dat.
 		
@@ -168,6 +171,14 @@ __attribute((used)) bool ParseCustomUppercaseTextTags(struct dialogue_display_st
 			return true;
 		ResetTextSpeedValues();
 		state->text_scrolling_done = 0;
+		return true;
+	}
+	else if(StrcmpTag(tag, "VP")) {
+		SetTextSoundPan(tag_vals[0] - 260);
+		return true;
+	}
+	if(StrcmpTag(tag, "VC")){
+		SetTextSoundPan(0);
 		return true;
 	}
 	else if(StrcmpTag(tag, "UNK")) {
