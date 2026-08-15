@@ -100,12 +100,12 @@ __attribute((used)) int CustomCreateDialogueBox(struct window_params* window_par
 }
 
 /*
-	Hijacks a call to CreatePortraitBox to place a portrait loaded by a script command on the Top Screen, if PERFORMANCE_PROGRESS_LIST[62] is set.
+	Hijacks a call to CreatePortraitBox to place a portrait loaded by a script command on the Top Screen, if PERFORMANCE_PROGRESS_LIST[62] is set and PERFORMANCE_PROGRESS_LIST[63] is unset.
 	Please note that framing doesn't seem to work for portraits on the Top Screen.
 */
 __attribute((used)) int CustomCreatePortraitBox(enum screen screen, uint32_t palette_idx, bool framed) {
 	enum screen new_screen = screen;
-	if(GetPerformanceFlagWithChecks(62))
+	if(GetPerformanceFlagWithChecks(62) && !GetPerformanceFlagWithChecks(63))
 		new_screen = LoadScriptVariableValueAtIndex(NULL, VAR_SCENARIO_SUB3, 0);
 	return CreatePortraitBox(new_screen, palette_idx, framed);
 }
