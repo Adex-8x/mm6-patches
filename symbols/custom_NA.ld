@@ -57,6 +57,13 @@ FileOpenInner = 0x0207F6C4;
 FileOpenInnerCallsite1 = 0x02008228;
 FileOpenInnerCallsite2 = 0x0206D704;
 PlaySeFull = 0x201831C; /* EU: 0x20183B8 */
+SetFlushTypeDefaultCase = 0x200BD8C;
+SetFlushTypeReturn = 0x200C000;
+SetFlushTypeQuickExit = 0x200BD6C;
+InitFlush = 0x200A410;
+UpdatePalettesFlush = 0x200AE78;
+VanillaFlush = 0x200AEC0;
+UpdatePalettesReturn = 0x200B0A4;
 
 TEXTBOX_COLOR_ATTRIBUTES = 0x02027800;
 
