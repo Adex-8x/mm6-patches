@@ -6,6 +6,10 @@
 const char MOTTO[] = "なんでもできる";
 const char SOUND_BGM_PATH[] = "SOUND/BGM";
 const char DECOI_BRANCH_PREFIXES[3] = {'E', 'C', 'O'};
+const char NOSHOW_CONTROL[] = {4, 0};
+const char NOSHOW_OBLITERATION[] = {7, 0};
+
+const char* NOSHOWS[3] = {NULL, NOSHOW_CONTROL, NOSHOW_OBLITERATION};
 
 int participant_popup_timer = -1;
 int participant_popup_window_id = -1;
@@ -15,6 +19,7 @@ uint16_t text_denominator = 1;
 uint16_t text_count = 0;
 
 enum decoi_branch selected_branch = BRANCH_EXPLORATION;
+enum decoi_branch cached_branch = BRANCH_EXPLORATION;
 
 int GetParticipantTextStringId(int scene) {
     int text_string_id = (TEXT_STRING_PARTICIPANT_NAME_START+scene) + (selected_branch * TOTAL_SCENES_PER_BRANCH);
@@ -63,11 +68,44 @@ __attribute((used)) void CustomGetActingSceneName(char* truncated_scene_name, ch
 		return;
 	if(last_selected_scene == 0)
 		strncpy(truncated_scene_name, "initial", 8);
-	else
+	else {
+		// If we're playing all scenes, skip over a scene that didn't have a participant!
+		if(playing_all_scenes) {
+			char* noshow_scenes = NOSHOWS[selected_branch];
+			bool found_noshow;
+			// Need to loop in case of consectutive noshows...
+			do {
+				int i = 0;
+				found_noshow = false;
+				if(noshow_scenes) {
+					while(noshow_scenes[i]) {
+						if(noshow_scenes[i++] == last_selected_scene) {
+							last_selected_scene++;
+							found_noshow = true;
+							break;
+						}
+					}
+				}
+			} while(found_noshow);
+		}
 		snprintf(truncated_scene_name, 8, "%02d", last_selected_scene);
+	}
 		
 	#if EVENT_FINISHED
 	strncat(truncated_scene_name, DECOI_BRANCH_PREFIXES+selected_branch, 1);
+	if(cached_branch != selected_branch) {
+		// I actually don't know if these both are needed but ehhhhhh just to be safe
+		SoundDriverReset();
+		DseBgm_StopAll(0);
+		// Clean up all the relevant BGM stuff
+		struct file_stream* file = (void*)((uint32_t)(DSE_RWVF) + 0x14);
+		DseSwd_CloseMainBankFileReader(file);
+		DseMem_Free(DSE_RWVF);
+		DSE_RWVF = NULL; // This must be NULL due to an explict check in DseSwd_LoadMainBank
+		int thingy = DseSwd_LoadMainBank(SOUND_BGM_FILEPATH, 0, NULL, NULL);
+		DSE_THINGY = thingy;
+		cached_branch = selected_branch;
+	}
 	#endif
 	
 	SetPerformanceFlagWithChecks(62, 0);
@@ -200,7 +238,7 @@ __attribute((used)) bool ParseCustomUppercaseTextTags(struct dialogue_display_st
 
 /*
 	Parses custom lowercase text tags.
-		- "love" returns "なんでもできる！"
+		- "love" returns "なんでもできる"
 		
 	Returns NULL upon error, otherwise a char buffer (which may either be hardcoded, or copied into the "buf" param).
 */

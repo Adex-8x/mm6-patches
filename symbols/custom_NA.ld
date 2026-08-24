@@ -64,6 +64,7 @@ InitFlush = 0x200A410;
 UpdatePalettesFlush = 0x200AE78;
 VanillaFlush = 0x200AEC0;
 UpdatePalettesReturn = 0x200B0A4;
+SOUND_BGM_FILEPATH = 0x020AFB4C;
 
 TEXTBOX_COLOR_ATTRIBUTES = 0x02027800;
 
@@ -78,6 +79,8 @@ TSYPosLive = 0x22A35E0;
 TSPressed = 0x22A35E4;
 TSXPosLastMitDrag = 0x22A35FC;
 TSYPosLastMitDrag = 0x22A3600;
+DSE_THINGY = 0x022A4E5C;
+DSE_RWVF = 0x022B910C;
 
 /* Cache functions */
 InvalidateInstructionCache = 0x0207A324;

@@ -3,7 +3,7 @@
 #include <pmdsky.h>
 #include <cot.h>
 
-#define EVENT_FINISHED 0
+#define EVENT_FINISHED 1
 #define SECTION_TEXT_PLAYBILL __attribute__((section(".text.playbill"))) __attribute((used))
 #define SECTION_DATA_PLAYBILL __attribute__((section(".data.playbill"))) __attribute((used))
 
@@ -88,6 +88,11 @@ struct font_data {
     void* unkno_rd_base;
 };
 
+struct dse_memory {
+    void* driver;
+    struct mem_arena* arena;
+};
+
 // Symbols not yet documented on pmdsky-debug
 extern void PlayBgm2ByIdVolumeVeneer(enum music_id music_id, int duration, int volume);
 extern void ChangeSeVolumeVeneer(int se_id, int duration, int volume);
@@ -106,6 +111,9 @@ extern void LoadStaffont(void);
 extern bool FileOpenInner(struct file_stream* file, char* filepath);
 extern struct rgba TEXTBOX_COLOR_ATTRIBUTES;
 extern struct font_data FONT_DATA;
+extern void* DSE_RWVF;
+extern int DSE_THINGY;
+extern char SOUND_BGM_FILEPATH[18];
 
 // Generic stuff
 extern void SwapFont(const char* filepath, bool swap_unkno);
