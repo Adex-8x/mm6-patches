@@ -64,6 +64,7 @@ InitFlush = 0x200A410;
 UpdatePalettesFlush = 0x200AE78;
 VanillaFlush = 0x200AEC0;
 UpdatePalettesReturn = 0x200B0A4;
+ScrollText = 0x01FF929C;
 SOUND_BGM_FILEPATH = 0x020AFB4C;
 
 TEXTBOX_COLOR_ATTRIBUTES = 0x02027800;

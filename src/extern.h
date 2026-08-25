@@ -20,6 +20,8 @@
 
 #define TEXT_STRING_HIJACK_OPTIONS_MENU 31337
 
+#define PARTICIPANT_POPUP_ALPHA 0xB0
+
 enum decoi_branch {
     BRANCH_INVALID = -1,
     BRANCH_EXPLORATION,
@@ -109,6 +111,7 @@ extern void PlayTimerTickWrapper(void);
 extern void LoadMarkfont(void);
 extern void LoadStaffont(void);
 extern bool FileOpenInner(struct file_stream* file, char* filepath);
+extern void ScrollText(int window_id);
 extern struct rgba TEXTBOX_COLOR_ATTRIBUTES;
 extern struct font_data FONT_DATA;
 extern void* DSE_RWVF;

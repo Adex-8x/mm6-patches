@@ -38,22 +38,34 @@ void ResetTextSpeedValues(void) {
 void CreateParticipantPopup(void) {
 	int scene_number = last_selected_scene;
 	char* participant_string;
-	char popup_message[0x200];
+	char popup_message[0x200] = {0};
 	if(scene_number == 0)
-		strncpy(popup_message, "[UNK:0][FT:1][CN]Ｉｎｉｔｉａｌ　Ｓｃｅｎｅ\n[UNK:1][FT:0][CN]", sizeof(popup_message));
-	else
-		sprintf(popup_message, "[UNK:0][FT:1][CN]Ｓｃｅｎｅ　%d\n[UNK:1][FT:0][CN]", scene_number);
-	struct window_params window_params = { .x_offset = 0x1, .y_offset = 0x1, .width = 0x1E, .height = 0x4, .screen = {SCREEN_MAIN}, .box_type = {0xFC} };
+		return; // No special box for the initial scene, sowwy
+	sprintf(popup_message, "[UNK:0][FT:1][CN]Ｓｃｅｎｅ　%d\n[UNK:1][FT:0][CN]", scene_number);
+	struct window_params window_params = { .x_offset = 0x1, .y_offset = 0x1, .width = 0x1E, .height = 0x4, .screen = {SCREEN_MAIN}, .box_type = {0xFF} };
 	struct preprocessor_flags preprocessor_flags = {.flags_1 = 0b000000010, .timer_2 = true};
 	participant_string = StringFromId(GetParticipantTextStringId(scene_number));
-	// This never really runs for MMR, but whatever, leftover code go brr
+	// Custom strcat b/c we need to center all the newlines...
+	int j = strlen(popup_message);
 	for(int i = 0; i < strlen(participant_string); i++) {
-		if(participant_string[i] == '\n')
-			participant_string[i] = ' ';
+		popup_message[j++] = participant_string[i];
+		if(participant_string[i] == '\n') {
+			window_params.height += 2;
+			popup_message[j++] = '[';
+			popup_message[j++] = 'C';
+			popup_message[j++] = 'N';
+			popup_message[j++] = ']';
+		}
 	}
-	strcat(popup_message, participant_string);
+	
 	if(participant_popup_timer < 0)
 		participant_popup_window_id = CreateDialogueBox(&window_params);
+	struct window* window = GetWindow(participant_popup_window_id);
+	if(window) {
+		MemZero(&(window->backdrop.color[0]), sizeof(window->backdrop.color[0]));
+		MemZero(&(window->frame.color[0]), 3);
+		window->frame.color[0].a = PARTICIPANT_POPUP_ALPHA;
+	}
 	ShowStringInDialogueBox(participant_popup_window_id, preprocessor_flags, popup_message, NULL);
 	participant_popup_timer = 480;
 }
@@ -101,13 +113,14 @@ __attribute((used)) void CustomGetActingSceneName(char* truncated_scene_name, ch
 		struct file_stream* file = (void*)((uint32_t)(DSE_RWVF) + 0x14);
 		DseSwd_CloseMainBankFileReader(file);
 		DseMem_Free(DSE_RWVF);
-		DSE_RWVF = NULL; // This must be NULL due to an explict check in DseSwd_LoadMainBank
+		DSE_RWVF = NULL; // This must be NULL due to an explicit check in DseSwd_LoadMainBank
 		int thingy = DseSwd_LoadMainBank(SOUND_BGM_FILEPATH, 0, NULL, NULL);
 		DSE_THINGY = thingy;
 		cached_branch = selected_branch;
 	}
 	#endif
 	
+	TextboxSolid();
 	SetPerformanceFlagWithChecks(62, 0);
 	ResetTextSpeedValues();
 	// Reset the SCENARIO_SUB variables...
@@ -263,9 +276,18 @@ __attribute((used)) char* ParseCustomLowercaseTextTags(char* buf, const char* ta
 __attribute((used)) void YouCanDoAnything(void) {
 	PlayTimerTickWrapper();
 	if(participant_popup_timer >= 0) {
+		struct window* window = GetWindow(participant_popup_window_id);
         if(participant_popup_timer == 0 && participant_popup_window_id >= 0) {
             CloseDialogueBox(participant_popup_window_id);
 			participant_popup_window_id = -1;
+		}
+		else if(window) {
+			window->backdrop.color[0].a = PARTICIPANT_POPUP_ALPHA;
+			if(participant_popup_timer <= 60) {
+				window->backdrop.vec[0].y -= 2;
+				window->frame.vec[0].y -= 2;
+				ScrollText(participant_popup_window_id);
+			}
 		}
         participant_popup_timer--;
     }
