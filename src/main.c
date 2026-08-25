@@ -67,7 +67,7 @@ void CreateParticipantPopup(void) {
 		window->frame.color[0].a = PARTICIPANT_POPUP_ALPHA;
 	}
 	ShowStringInDialogueBox(participant_popup_window_id, preprocessor_flags, popup_message, NULL);
-	participant_popup_timer = 480;
+	participant_popup_timer = PARTICIPANT_POPUP_TIMER_SECONDS;
 }
 
 /*
@@ -283,7 +283,7 @@ __attribute((used)) void YouCanDoAnything(void) {
 		}
 		else if(window) {
 			window->backdrop.color[0].a = PARTICIPANT_POPUP_ALPHA;
-			if(participant_popup_timer <= 60) {
+			if(participant_popup_timer <= PARTICIPANT_POPUP_SLIDE_SECONDS) {
 				window->backdrop.vec[0].y -= 2;
 				window->frame.vec[0].y -= 2;
 				ScrollText(participant_popup_window_id);
