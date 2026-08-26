@@ -4,13 +4,13 @@
 #include <cot.h>
 #include "extern.h"
 
-#define MONSTER_KINGAMBIT 1202
+#define MONSTER_KINGAMBIT 1245 // 1202
 
-#define ACTOR_PARTY1 69
-#define ACTOR_PARTY2 70
-#define ACTOR_PARTY3 71
-#define ACTOR_BOSS 73
-#define ACTOR_GOON2 93
+#define ACTOR_PARTY1 173 // 69
+#define ACTOR_PARTY2 174 // 70
+#define ACTOR_PARTY3 175 // 71
+#define ACTOR_BOSS 177 // 73
+#define ACTOR_GOON2 197 // 93
 
 #define BATTLE_MAX_TEAM_HP 420
 #define BATTLE_ORAN_BERRY_HEAL 200
