@@ -34,7 +34,6 @@ from skytemple_files.data.data_cd.handler import DataCDHandler
 from skytemple_files.hardcoded.monster_sprite_data_table import HardcodedMonsterGroundIdleAnimTable
 from explorerscript.ssb_converting.ssb_data_types import SsbRoutineType
 
-import os
 import re
 import logging
 import argparse
