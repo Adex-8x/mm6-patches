@@ -171,34 +171,38 @@ bool CustomScriptSpecialProcessCall(struct script_routine* routine, uint32_t spe
       *return_val = SpCheckUserString(routine, arg1);
       return true;
     case 112:
-    switch (arg1){
-      case 1:
-      zufallsgeneration();
+      switch (arg1) {
+        case 1:
+        zufallsgeneration();
+        break;
+        case 2:
+        *return_val = checkFlaechen();
+        break;
+        case 3:
+        *return_val = checkTSDruck();
+        break;
+        case 4:
+        *return_val = checkTagFlag(arg2);
+        break;
+        case 5:
+        *return_val = checkAufgedeckt(arg2);
+        break;
+        case 6:
+        aufdecken(arg2);
+        break;
+        case 7:
+        *return_val = checkWin();
+        break;
+        case 8:
+        positionAnpassen();
+        break;
+        default:
+        break;
+      }
       break;
-      case 2:
-      *return_val = checkFlaechen();
+    case 113:
+      *return_val = selected_branch;
       break;
-      case 3:
-      *return_val = checkTSDruck();
-      break;
-      case 4:
-      *return_val = checkTagFlag(arg2);
-      break;
-      case 5:
-      *return_val = checkAufgedeckt(arg2);
-      break;
-      case 6:
-      aufdecken(arg2);
-      break;
-      case 7:
-      *return_val = checkWin();
-      break;
-      case 8:
-      positionAnpassen();
-      break;
-      default:
-      break;
-    }
     default:
       return false;
   }
