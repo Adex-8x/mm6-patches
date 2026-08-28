@@ -136,7 +136,7 @@ __attribute((used)) void CustomGetActingSceneName(char* truncated_scene_name, ch
 			buffer++;
 		}
 	}
-	if(playing_all_scenes && last_selected_scene > 0)
+	if(playing_all_scenes && last_selected_scene > 0 && last_selected_scene < TOTAL_SCENES_PER_BRANCH)
 		CreateParticipantPopup();
 }
 
