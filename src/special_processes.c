@@ -199,7 +199,7 @@ bool CustomScriptSpecialProcessCall(struct script_routine* routine, uint32_t spe
         default:
         break;
       }
-      break;
+      return true;
     case 113:
       *return_val = selected_branch;
       break;
