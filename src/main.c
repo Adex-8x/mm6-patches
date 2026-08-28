@@ -5,6 +5,7 @@
 
 const char MOTTO[] = "なんでもできる";
 const char SOUND_BGM_PATH[] = "SOUND/BGM";
+const char SPECIAL_BGM_PREFIX[] = "bgm058";
 const char DECOI_BRANCH_PREFIXES[3] = {'E', 'C', 'O'};
 const char NOSHOW_CONTROL[] = {4, 0};
 const char NOSHOW_OBLITERATION[] = {7, 0};
@@ -100,7 +101,10 @@ __attribute((used)) void CustomGetActingSceneName(char* truncated_scene_name, ch
 				}
 			} while(found_noshow);
 		}
-		snprintf(truncated_scene_name, 8, "%02d", last_selected_scene);
+		if(last_selected_scene < TOTAL_SCENES_PER_BRANCH)
+			snprintf(truncated_scene_name, 8, "%02d", last_selected_scene);
+		else
+			strncpy(truncated_scene_name, "decoy", 8); // Fallback in case we go out of bounds
 	}
 		
 	#if EVENT_FINISHED
@@ -317,7 +321,11 @@ __attribute((used)) bool HijackFileOpenInner(struct file_stream* file, char* fil
 		char* current_path = filepath_hijack + sizeof(SOUND_BGM_PATH)-1;
 		// Assume we've selected the Exploration branch
 		// If loading "SOUND/BGM/bgm.swd", load "SOUND/BGME/bgm.swd" instead
-		*current_path = DECOI_BRANCH_PREFIXES[selected_branch];
+		// Actually...if we're using a BGM starting with "058", hardcode the directory.
+		if(strncmp(filepath+sizeof(SOUND_BGM_PATH), SPECIAL_BGM_PREFIX, sizeof(SPECIAL_BGM_PREFIX)-1) == 0)
+			*current_path = 'X';
+		else
+			*current_path = DECOI_BRANCH_PREFIXES[selected_branch];
 		current_path++;
 		strcpy(current_path, filepath + sizeof(SOUND_BGM_PATH)-1);
 		filepath = filepath_hijack;
