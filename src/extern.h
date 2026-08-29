@@ -24,6 +24,8 @@
 #define PARTICIPANT_POPUP_SLIDE_SECONDS 60
 #define PARTICIPANT_POPUP_TIMER_SECONDS 480+PARTICIPANT_POPUP_SLIDE_SECONDS
 
+#define PARTICIPANT_CREDITS_TIMER 360
+
 enum decoi_branch {
     BRANCH_INVALID = -1,
     BRANCH_EXPLORATION,
@@ -111,9 +113,12 @@ extern int CreateLiveObject(int follow_idx, struct object_spawn *object_spawn, i
 extern void GetOptionsMenuAllChoices(int window_id, int* buf);
 extern void PlayTimerTickWrapper(void);
 extern void LoadMarkfont(void);
-extern void LoadStaffont(void);
+extern void LoadStaffont(int id);
 extern bool FileOpenInner(struct file_stream* file, char* filepath);
 extern void ScrollText(int window_id);
+extern void LoadActingSector(int sector_id);
+extern void LoadSceneStuff(int sector_id);
+extern void RemoveActingSector(int sector_id);
 extern struct rgba TEXTBOX_COLOR_ATTRIBUTES;
 extern struct font_data FONT_DATA;
 extern void* DSE_RWVF;

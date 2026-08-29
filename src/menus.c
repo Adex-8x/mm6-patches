@@ -6,6 +6,8 @@
 int last_selected_scene = 0;
 bool playing_all_scenes = false;
 char menu_user_string[10] = {0};
+const char COLOR_TAG[] = "[CS:F]";
+const char PARTICIPANT_CREDITS_NAME_DELIMITER[] = "\n[HR][CN]";
 
 // The initial menu function called to show a keyboard prompt for the player to type in a string.
 // This is intended to be used by a variety of menus.
@@ -80,6 +82,59 @@ void CloseGenericInputMenu(void) {
     GLOBAL_MENU_INFO.return_val = 0;
 }
 
+void CreateParticipantCredits(void) {
+    struct window_params window_params = { .x_offset = 0x3, .y_offset = 0x4, .width = 0x1A, .height = 0xE, .screen = {SCREEN_SUB}, .box_type = {0xFA} };
+    LoadStaffont(0);
+    SaveScriptVariableValue(NULL, VAR_DUNGEON_EVENT_LOCAL, 0);
+    GLOBAL_MENU_INFO.window_ids[0] = CreateDialogueBox(&window_params);
+    GLOBAL_MENU_INFO.state = 1;
+}
+
+void CloseParticipantCredits(void) {
+    CloseDialogueBox(GLOBAL_MENU_INFO.window_ids[0]);
+    GLOBAL_MENU_INFO.window_ids[0] = -1;
+    LoadMarkfont();
+}
+
+bool UpdateParticipantCredits(void) {
+    GLOBAL_MENU_INFO.state--;
+    if(GLOBAL_MENU_INFO.state > 0)
+        return false;
+    
+    char credits_string[0x200] = {0};
+    int current_scene = LoadScriptVariableValue(NULL, VAR_DUNGEON_EVENT_LOCAL);
+    struct preprocessor_flags preprocessor_flags = {.flags_1 = 0b000000010, .timer_2 = true}; // Instant text without waiting for any input!
+    if(current_scene < TOTAL_SCENES_PER_BRANCH) {
+        if(current_scene > 0)
+            RemoveActingSector(current_scene);
+        int next_scene = current_scene+1;
+        // TODO: Special text string for event organizers for when next_scene == TOTAL_SCENES_PER_BRANCH
+        char* participant_string = StringFromId(GetParticipantTextStringId(next_scene));
+        sprintf(credits_string, "[UNK:0][FT:1][CN]Ｓｃｅｎｅ　%d[BAR]\n[HR][UNK:1][FT:2][CN]", next_scene);
+        // Need to extract out the partcipant names...
+        char* name_start = strstr(participant_string, COLOR_TAG);
+        while(name_start) {
+            name_start += sizeof(COLOR_TAG)-1;
+            char* name_end = strchr(name_start, '[');
+            if(name_end == NULL)
+                break;
+            strncat(credits_string, name_start, name_end-name_start);
+            strncat(credits_string, PARTICIPANT_CREDITS_NAME_DELIMITER, sizeof(PARTICIPANT_CREDITS_NAME_DELIMITER)-1);
+            participant_string = name_end+1;
+            name_start = strstr(participant_string, COLOR_TAG);
+        }
+        ShowStringInDialogueBox(GLOBAL_MENU_INFO.window_ids[0], preprocessor_flags, credits_string, NULL);
+        LoadActingSector(next_scene);
+        LoadSceneStuff(next_scene);
+        SaveScriptVariableValue(NULL, VAR_DUNGEON_EVENT_LOCAL, next_scene);
+        GLOBAL_MENU_INFO.state = PARTICIPANT_CREDITS_TIMER;
+        return false;
+    }
+    else {
+        GLOBAL_MENU_INFO.return_val = 1;
+        return true;
+    }
+}
 
 
 
@@ -142,6 +197,13 @@ __attribute((used)) struct custom_menu CUSTOM_MENUS[] = {
         .create = CreateSimpleKeyboardMenu,
         .close = CloseGenericInputMenu,
         .update = UpdateSimpleKeyboardMenu
+    },
+    // ID 87
+    // Participant credits!
+    {
+        .create = CreateParticipantCredits,
+        .close = CloseParticipantCredits,
+        .update = UpdateParticipantCredits
     }
 };
 

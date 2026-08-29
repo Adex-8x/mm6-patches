@@ -68,7 +68,7 @@ static bool SpSwapFont(struct script_routine* routine, short script_string_id, b
 
 static bool SpChangeExtraFont(bool staffont) {
   if(staffont)
-    LoadStaffont();
+    LoadStaffont(0);
   else
     LoadMarkfont();
   return true;

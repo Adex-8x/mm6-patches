@@ -17,6 +17,9 @@ ShouldReloadCachedScene = 0x022E573C;
 CreateSaveMenuCallsite = 0x022E670C;
 CreateDayCareMenuCallsite = 0x022E63D0;
 PlayTimerTickWrapperCallsite = 0x022E8E2C;
+LoadActingSector = 0x022e5a38;
+LoadSceneStuff = 0x022e5bb8;
+RemoveActingSector = 0x022e5b10;
 EXECUTE_EXPORT_FILEPATH = 0x02319774;
 
 /* !file arm9 */
