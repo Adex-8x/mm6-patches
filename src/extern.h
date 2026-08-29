@@ -17,6 +17,7 @@
 #define TEXT_STRING_SCENE_STARTER_TITLE 8744
 #define TEXT_STRING_SCENE_STARTER_DESC 8745
 #define TEXT_STRING_PARTICIPANT_NAME_START 8750
+#define TEXT_STRING_EVENT_ORGANIZERS 296
 
 #define TEXT_STRING_HIJACK_OPTIONS_MENU 31337
 
@@ -119,6 +120,7 @@ extern void ScrollText(int window_id);
 extern void LoadActingSector(int sector_id);
 extern void LoadSceneStuff(int sector_id);
 extern void RemoveActingSector(int sector_id);
+extern void ChangeFontType(int font_id);
 extern struct rgba TEXTBOX_COLOR_ATTRIBUTES;
 extern struct font_data FONT_DATA;
 extern void* DSE_RWVF;
