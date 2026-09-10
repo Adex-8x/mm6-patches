@@ -123,12 +123,17 @@
 .open "overlay28.bin", overlay28_start
     .org CREDITS_SCROLL_SPEED+0x1
     .area 0x1
-        .byte 0x62
+        .byte 0x63
     .endarea
 	
 	.org CREDITS_FINAL_STRING_ID
 	.area 0x4
-		.word 0x4550
+		.word 0x457A
+	.endarea
+	
+	.org CREDITS_ALLOC_SIZE
+	.area 0x4
+		.word 0x3700 ; originally 0x3618
 	.endarea
 .close
 
