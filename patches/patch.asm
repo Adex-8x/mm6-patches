@@ -128,7 +128,7 @@
 	
 	.org CREDITS_FINAL_STRING_ID
 	.area 0x4
-		.word 0x457A
+		.word 0x457B
 	.endarea
 	
 	.org CREDITS_ALLOC_SIZE
