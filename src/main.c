@@ -77,6 +77,20 @@ void CreateParticipantPopup(void) {
 */
 __attribute((used)) void CustomGetActingSceneName(char* truncated_scene_name, char* full_scene_name) {
 	GetSceneName(truncated_scene_name, full_scene_name);
+	TextboxSolid();
+	SetPerformanceFlagWithChecks(62, 0);
+	SetPerformanceFlagWithChecks(63, 0);
+	ResetTextSpeedValues();
+	// Reset the SCENARIO_SUB variables...
+	// SkyTemple's debugger actually raises errors for out-of-bounds indexing, so just play nicely.
+	uint8_t* buffer = (uint8_t*)&(DIALOGUE_BOX_DEFAULT_WINDOW_PARAMS.x_offset);
+	for(int i = 0; i < 3; i++) {
+		for(int j = 0; j < 2; j++) {
+			SaveScriptVariableValueAtIndex(NULL, VAR_SCENARIO_SUB1+i, j, *buffer);
+			buffer++;
+		}
+	}
+	
 	if(strncmp(truncated_scene_name, "DECOI", 8) != 0)
 		return;
 	if(last_selected_scene == 0)
@@ -124,18 +138,6 @@ __attribute((used)) void CustomGetActingSceneName(char* truncated_scene_name, ch
 	}
 	#endif
 	
-	TextboxSolid();
-	SetPerformanceFlagWithChecks(62, 0);
-	ResetTextSpeedValues();
-	// Reset the SCENARIO_SUB variables...
-	// SkyTemple's debugger actually raises errors for out-of-bounds indexing, so just play nicely.
-	uint8_t* buffer = (uint8_t*)&(DIALOGUE_BOX_DEFAULT_WINDOW_PARAMS.x_offset);
-	for(int i = 0; i < 3; i++) {
-		for(int j = 0; j < 2; j++) {
-			SaveScriptVariableValueAtIndex(NULL, VAR_SCENARIO_SUB1+i, j, *buffer);
-			buffer++;
-		}
-	}
 	if(playing_all_scenes && last_selected_scene > 0 && last_selected_scene < TOTAL_SCENES_PER_BRANCH)
 		CreateParticipantPopup();
 }
