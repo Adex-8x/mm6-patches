@@ -133,7 +133,7 @@
 	
 	.org CREDITS_ALLOC_SIZE
 	.area 0x4
-		.word 0x3700 ; originally 0x3618
+		.word 0x3818 ; originally 0x3618
 	.endarea
 .close
 

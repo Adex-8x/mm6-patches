@@ -255,7 +255,8 @@ __attribute((used)) bool ParseCustomUppercaseTextTags(struct dialogue_display_st
 
 /*
 	Parses custom lowercase text tags.
-		- "love" returns "なんでもできる"
+		- "love" returns "なんでもできる".
+		- "lonely" returns the current user-inputted string.
 		
 	Returns NULL upon error, otherwise a char buffer (which may either be hardcoded, or copied into the "buf" param).
 */
@@ -269,6 +270,13 @@ __attribute((used)) char* ParseCustomLowercaseTextTags(char* buf, const char* ta
 		
 	if(StrcmpTag(tag, "love")) {
 		strncpy(buf, MOTTO, sizeof(MOTTO));
+		return buf;
+	}
+	else if(StrcmpTag(tag, "lonely")) {
+		if(tag_param_count == 0)
+			strncpy(buf, menu_user_string, sizeof(menu_user_string));
+		else
+			sprintf(buf, "[CS:%c]%s[CR]", tag_params[0][0], menu_user_string);
 		return buf;
 	}
 	return NULL;

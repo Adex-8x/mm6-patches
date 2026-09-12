@@ -100,6 +100,11 @@ struct dse_memory {
     struct mem_arena* arena;
 };
 
+struct name_entry {
+    uint16_t category;
+    uint8_t hash[0x10];
+};
+
 // Symbols not yet documented on pmdsky-debug
 extern void PlayBgm2ByIdVolumeVeneer(enum music_id music_id, int duration, int volume);
 extern void ChangeSeVolumeVeneer(int se_id, int duration, int volume);
@@ -147,8 +152,8 @@ extern bool playing_all_scenes;
 // Control Scene Memory Special Process
 extern int SpControlSceneMemory(int params, int scene);
 
-// 10-char string to be set by a script menu and checked by a special process
-extern char menu_user_string[10];
+// 11-char string to be set by a script menu and checked by a special process
+extern char menu_user_string[11];
 
 //Touchscreen Stuff
 extern uint8_t TSXPosLive;

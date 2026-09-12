@@ -7,8 +7,9 @@
 
 int last_selected_scene = 0;
 bool playing_all_scenes = false;
-char menu_user_string[10] = {0};
+char menu_user_string[11] = {0};
 
+const char NAME_SALT[] = "デコイ";
 const char PARTICIPANT_COLOR_TAG[] = "[CS:F]";
 const char NOSHOW_COLOR_TAG[] = "[CS:B]";
 const char PARTICIPANT_CREDITS_NAME_DELIMITER[] = "\n[HR][CN]";
@@ -83,7 +84,7 @@ void CloseFithteaoneMailMenu(void) {
 
 void CloseGenericInputMenu(void) {
     MemZero(menu_user_string, sizeof(menu_user_string));
-    strncpy(menu_user_string, (char*)GetKeyboardStringResult(), sizeof(menu_user_string));
+    strncpy(menu_user_string, (char*)GetKeyboardStringResult(), sizeof(menu_user_string)-1);
     for(int i = 0; i < sizeof(menu_user_string) && menu_user_string[i] != '\0'; i++) {
         if(menu_user_string[i] >= 'A' && menu_user_string[i] <= 'Z')
             menu_user_string[i] += 0x20;
@@ -161,6 +162,34 @@ bool UpdateParticipantCredits(void) {
     }
 }
 
+void CloseNameCheckMenu(void) {
+    uint8_t ctx[0x80];
+    uint32_t hash[0x4];
+    struct file_stream file;
+    struct name_entry entry;
+    CloseGenericInputMenu();
+    MD5_Init(ctx);
+    MD5_Update(ctx, NAME_SALT, sizeof(NAME_SALT)-1);
+    MD5_Update(ctx, menu_user_string, strlen(menu_user_string));
+    MD5_Digest(hash, ctx);
+    DataTransferInit();
+    FileInitVeneer(&file);
+    FileOpen(&file, "SYSTEM/onamaewa.bin");
+    uint32_t size = FileGetSize(&file);
+    uint32_t total_read = 0x0;
+    do {
+        uint32_t nb_read = FileRead(&file, &entry, sizeof(entry));
+        if(nb_read == 0)
+            break;
+        total_read += nb_read;
+        if(memcmp(hash, entry.hash, sizeof(hash)) == 0) {
+            GLOBAL_MENU_INFO.return_val = entry.category;
+            break;
+        }
+    } while(total_read < size);
+    FileClose(&file);
+    DataTransferStop();
+}
 
 
 // Add your custom script menus to the list below.
@@ -229,6 +258,15 @@ __attribute((used)) struct custom_menu CUSTOM_MENUS[] = {
         .create = CreateParticipantCredits,
         .close = CloseParticipantCredits,
         .update = UpdateParticipantCredits
+    },
+    // ID 88
+    // Name check shenangians!
+    {
+        .keyboard_prompt_string_id = 302,
+        .keyboard_confirm_string_id = 303,
+        .create = CreateSimpleKeyboardMenu,
+        .close = CloseNameCheckMenu,
+        .update = UpdateSimpleKeyboardMenu
     }
 };
 
