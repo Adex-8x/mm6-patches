@@ -274,9 +274,9 @@ __attribute((used)) char* ParseCustomLowercaseTextTags(char* buf, const char* ta
 	}
 	else if(StrcmpTag(tag, "lonely")) {
 		if(tag_param_count == 0)
-			strncpy(buf, menu_user_string, sizeof(menu_user_string));
+			strncpy(buf, raw_keyboard_string, sizeof(raw_keyboard_string));
 		else
-			sprintf(buf, "[CS:%c]%s[CR]", tag_params[0][0], menu_user_string);
+			sprintf(buf, "[CS:%c]%s[CR]", tag_params[0][0], raw_keyboard_string);
 		return buf;
 	}
 	return NULL;

@@ -7,7 +7,8 @@
 
 int last_selected_scene = 0;
 bool playing_all_scenes = false;
-char menu_user_string[11] = {0};
+char menu_user_string[11] = {0}; // casted to lowercase
+char raw_keyboard_string[11] = {0}; // not modified
 
 const char NAME_SALT[] = "デコイ";
 const char PARTICIPANT_COLOR_TAG[] = "[CS:F]";
@@ -84,8 +85,10 @@ void CloseFithteaoneMailMenu(void) {
 
 void CloseGenericInputMenu(void) {
     MemZero(menu_user_string, sizeof(menu_user_string));
+    MemZero(raw_keyboard_string, sizeof(raw_keyboard_string));
     strncpy(menu_user_string, (char*)GetKeyboardStringResult(), sizeof(menu_user_string)-1);
     for(int i = 0; i < sizeof(menu_user_string) && menu_user_string[i] != '\0'; i++) {
+        raw_keyboard_string[i] = menu_user_string[i];
         if(menu_user_string[i] >= 'A' && menu_user_string[i] <= 'Z')
             menu_user_string[i] += 0x20;
     }

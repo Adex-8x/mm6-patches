@@ -154,6 +154,7 @@ extern int SpControlSceneMemory(int params, int scene);
 
 // 11-char string to be set by a script menu and checked by a special process
 extern char menu_user_string[11];
+extern char raw_keyboard_string[11];
 
 //Touchscreen Stuff
 extern uint8_t TSXPosLive;
