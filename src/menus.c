@@ -171,6 +171,7 @@ void CloseNameCheckMenu(void) {
     struct file_stream file;
     struct name_entry entry;
     CloseGenericInputMenu();
+    UnlockScriptingLock(1);
     MD5_Init(ctx);
     MD5_Update(ctx, NAME_SALT, sizeof(NAME_SALT)-1);
     MD5_Update(ctx, menu_user_string, strlen(menu_user_string));
