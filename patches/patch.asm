@@ -128,12 +128,12 @@
 	
 	.org CREDITS_FINAL_STRING_ID
 	.area 0x4
-		.word 0x457E
+		.word 0x4580
 	.endarea
 	
 	.org CREDITS_ALLOC_SIZE
 	.area 0x4
-		.word 0x4218 ; originally 0x3618; ehhh prob doesn't need to be this beeg but whatever
+		.word 0x4418 ; originally 0x3618; ehhh prob doesn't need to be this beeg but whatever
 	.endarea
 .close
 
