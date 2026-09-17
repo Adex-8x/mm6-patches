@@ -105,6 +105,12 @@ struct name_entry {
     uint8_t hash[0x10];
 };
 
+struct user_input {
+    char salt[6];
+    char raw[11];
+    char lowercase[11];
+};
+
 // Symbols not yet documented on pmdsky-debug
 extern void PlayBgm2ByIdVolumeVeneer(enum music_id music_id, int duration, int volume);
 extern void ChangeSeVolumeVeneer(int se_id, int duration, int volume);
@@ -152,9 +158,8 @@ extern bool playing_all_scenes;
 // Control Scene Memory Special Process
 extern int SpControlSceneMemory(int params, int scene);
 
-// 11-char string to be set by a script menu and checked by a special process
-extern char menu_user_string[11];
-extern char raw_keyboard_string[11];
+// A collection of strings to be set by a script menu and checked other things, like a special process or text tag
+extern struct user_input user_input;
 
 //Touchscreen Stuff
 extern uint8_t TSXPosLive;

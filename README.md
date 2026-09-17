@@ -1,5 +1,5 @@
 # mm6-patches
-A collection of custom ARM Assembly and C patches written for the sixth MysteryMail event.
+A collection of custom ARM Assembly and C patches specifically written for "Agents of Chaos", the sixth MysteryMail event. The featured code may reveal some degree of spoilers regarding the event!
 
 # Slightly edited c-of-time README
 

@@ -98,7 +98,7 @@ __attribute((used)) void CustomGetActingSceneName(char* truncated_scene_name, ch
 	else {
 		// If we're playing all scenes, skip over a scene that didn't have a participant!
 		if(playing_all_scenes) {
-			char* noshow_scenes = NOSHOWS[selected_branch];
+			const char* noshow_scenes = NOSHOWS[selected_branch];
 			bool found_noshow;
 			// Need to loop in case of consectutive noshows...
 			do {
@@ -276,9 +276,9 @@ __attribute((used)) char* ParseCustomLowercaseTextTags(char* buf, const char* ta
 	}
 	else if(StrcmpTag(tag, "lonely")) {
 		if(tag_param_count == 0)
-			strncpy(buf, raw_keyboard_string, sizeof(raw_keyboard_string));
+			strncpy(buf, user_input.raw, sizeof(user_input.raw));
 		else
-			sprintf(buf, "[CS:%c]%s[CR]", tag_params[0][0], raw_keyboard_string);
+			sprintf(buf, "[CS:%c]%s[CR]", tag_params[0][0], user_input.raw);
 		return buf;
 	}
 	return NULL;

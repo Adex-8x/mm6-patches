@@ -124,7 +124,7 @@ static bool SpLoadCode(struct script_routine* routine, short script_string_id) {
 
 static bool SpCheckUserString(struct script_routine* routine, short script_string_id) {
   const char* script_string = GetSsbString(routine->states[0].ssb_info, script_string_id);
-  return strncmp(menu_user_string, script_string, sizeof(menu_user_string)) == 0;
+  return strncmp(user_input.lowercase, script_string, sizeof(user_input.lowercase)) == 0;
 }
 
 // Called for special process IDs 100 and greater.
