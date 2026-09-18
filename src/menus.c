@@ -267,7 +267,7 @@ __attribute((used)) struct custom_menu CUSTOM_MENUS[] = {
         .update = UpdateParticipantCredits
     },
     // ID 88
-    // Name check shenangians!
+    // Name check shenanigans!
     {
         .keyboard_prompt_string_id = 302,
         .keyboard_confirm_string_id = 303,
